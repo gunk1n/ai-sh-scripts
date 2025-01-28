@@ -24,12 +24,16 @@ show_menu() {
     echo -e "${BLUE}4. Управление файлами${NC}"
     echo -e "${BLUE}5. Мониторинг системы${NC}"
     echo -e "${BLUE}6. Docker${NC}"
-    echo -e "${BLUE}7. SSH${NC}"
-    echo -e "${BLUE}8. Git${NC}"
-    echo -e "${BLUE}9. Python${NC}"
-    echo -e "${BLUE}10. Firewall (UFW)${NC}"
-    echo -e "${BLUE}11. Базы данных${NC}"
-    echo -e "${BLUE}12. Выход${NC}"
+    echo -e "${BLUE}7. Docker Compose${NC}"
+    echo -e "${BLUE}8. Управление пользователями${NC}"
+    echo -e "${BLUE}9. Управление дисками${NC}"
+    echo -e "${BLUE}10. Работа с процессами${NC}"
+    echo -e "${BLUE}11. SSH${NC}"
+    echo -e "${BLUE}12. Git${NC}"
+    echo -e "${BLUE}13. Python${NC}"
+    echo -e "${BLUE}14. Firewall (UFW)${NC}"
+    echo -e "${BLUE}15. Базы данных${NC}"
+    echo -e "${BLUE}16. Выход${NC}"
     echo -e "${GREEN}===========================================${NC}"
     echo -n -e "${YELLOW}Выберите категорию: ${NC}"
 }
@@ -45,7 +49,9 @@ system_commands() {
     echo -e "${BLUE}3. Показать информацию о системе${NC}"
     echo -e "${BLUE}4. Проверить использование диска${NC}"
     echo -e "${BLUE}5. Показать запущенные процессы${NC}"
-    echo -e "${BLUE}6. Вернуться в главное меню${NC}"
+    echo -e "${BLUE}6. Показать uptime системы${NC}"
+    echo -e "${BLUE}7. Показать версию ядра${NC}"
+    echo -e "${BLUE}8. Вернуться в главное меню${NC}"
     echo -e "${GREEN}====================================${NC}"
     echo -n -e "${YELLOW}Выберите команду: ${NC}"
     read choice
@@ -55,7 +61,9 @@ system_commands() {
         3) neofetch; log_action "Просмотр информации о системе" ;;
         4) df -h; log_action "Проверка использования диска" ;;
         5) htop; log_action "Просмотр запущенных процессов" ;;
-        6) return ;;
+        6) uptime; log_action "Просмотр uptime системы" ;;
+        7) uname -r; log_action "Просмотр версии ядра" ;;
+        8) return ;;
         *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
     esac
     read -p "Нажмите Enter, чтобы продолжить..."
@@ -72,7 +80,8 @@ network_commands() {
     echo -e "${BLUE}3. Показать открытые порты${NC}"
     echo -e "${BLUE}4. Показать сетевые интерфейсы${NC}"
     echo -e "${BLUE}5. Проверить доступность хоста${NC}"
-    echo -e "${BLUE}6. Вернуться в главное меню${NC}"
+    echo -e "${BLUE}6. Показать маршрут${NC}"
+    echo -e "${BLUE}7. Вернуться в главное меню${NC}"
     echo -e "${GREEN}====================================${NC}"
     echo -n -e "${YELLOW}Выберите команду: ${NC}"
     read choice
@@ -82,89 +91,92 @@ network_commands() {
         3) sudo netstat -tuln; log_action "Просмотр открытых портов" ;;
         4) ifconfig; log_action "Просмотр сетевых интерфейсов" ;;
         5) echo -n "Введите хост: "; read host; ping -c 4 $host; log_action "Проверка доступности хоста: $host" ;;
-        6) return ;;
-        *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
-    esac
-    read -p "Нажмите Enter, чтобы продолжить..."
-}
-
-# Функция для отображения команд управления пакетами
-package_commands() {
-    clear
-    echo -e "${GREEN}====================================${NC}"
-    echo -e "${GREEN} Управление пакетами ${NC}"
-    echo -e "${GREEN}====================================${NC}"
-    echo -e "${BLUE}1. Обновить список пакетов${NC}"
-    echo -e "${BLUE}2. Установить пакет${NC}"
-    echo -e "${BLUE}3. Удалить пакет${NC}"
-    echo -e "${BLUE}4. Обновить все пакеты${NC}"
-    echo -e "${BLUE}5. Поиск пакета${NC}"
-    echo -e "${BLUE}6. Очистить кэш пакетов${NC}"
-    echo -e "${BLUE}7. Вернуться в главное меню${NC}"
-    echo -e "${GREEN}====================================${NC}"
-    echo -n -e "${YELLOW}Выберите команду: ${NC}"
-    read choice
-    case $choice in
-        1) sudo apt update; log_action "Обновление списка пакетов" ;;
-        2) echo -n "Введите имя пакета: "; read pkg; sudo apt install $pkg; log_action "Установка пакета: $pkg" ;;
-        3) echo -n "Введите имя пакета: "; read pkg; sudo apt remove $pkg; log_action "Удаление пакета: $pkg" ;;
-        4) sudo apt upgrade; log_action "Обновление всех пакетов" ;;
-        5) echo -n "Введите имя пакета для поиска: "; read pkg; apt search $pkg; log_action "Поиск пакета: $pkg" ;;
-        6) sudo apt clean; log_action "Очистка кэша пакетов" ;;
+        6) route -n; log_action "Просмотр маршрута" ;;
         7) return ;;
         *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
     esac
     read -p "Нажмите Enter, чтобы продолжить..."
 }
 
-# Функция для работы с Git
-git_commands() {
+# Функция для работы с Docker
+docker_commands() {
     clear
     echo -e "${GREEN}====================================${NC}"
-    echo -e "${GREEN} Git ${NC}"
+    echo -e "${GREEN} Docker ${NC}"
     echo -e "${GREEN}====================================${NC}"
-    echo -e "${BLUE}1. Клонировать репозиторий${NC}"
-    echo -e "${BLUE}2. Показать статус репозитория${NC}"
-    echo -e "${BLUE}3. Добавить файлы в коммит${NC}"
-    echo -e "${BLUE}4. Создать коммит${NC}"
-    echo -e "${BLUE}5. Отправить изменения в удаленный репозиторий${NC}"
+    echo -e "${BLUE}1. Запустить контейнер${NC}"
+    echo -e "${BLUE}2. Остановить контейнер${NC}"
+    echo -e "${BLUE}3. Показать запущенные контейнеры${NC}"
+    echo -e "${BLUE}4. Показать все контейнеры${NC}"
+    echo -e "${BLUE}5. Удалить контейнер${NC}"
+    echo -e "${BLUE}6. Показать образы${NC}"
+    echo -e "${BLUE}7. Очистить неиспользуемые данные Docker${NC}"
+    echo -e "${BLUE}8. Вернуться в главное меню${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -n -e "${YELLOW}Выберите команду: ${NC}"
+    read choice
+    case $choice in
+        1) echo -n "Введите имя образа: "; read image; docker run -d $image; log_action "Запуск контейнера: $image" ;;
+        2) echo -n "Введите ID контейнера: "; read id; docker stop $id; log_action "Остановка контейнера: $id" ;;
+        3) docker ps; log_action "Просмотр запущенных контейнеров" ;;
+        4) docker ps -a; log_action "Просмотр всех контейнеров" ;;
+        5) echo -n "Введите ID контейнера: "; read id; docker rm $id; log_action "Удаление контейнера: $id" ;;
+        6) docker images; log_action "Просмотр образов Docker" ;;
+        7) docker system prune -f; log_action "Очистка неиспользуемых данных Docker" ;;
+        8) return ;;
+        *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
+    esac
+    read -p "Нажмите Enter, чтобы продолжить..."
+}
+
+# Функция для работы с Docker Compose
+docker_compose_commands() {
+    clear
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${GREEN} Docker Compose ${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${BLUE}1. Запустить сервисы${NC}"
+    echo -e "${BLUE}2. Остановить сервисы${NC}"
+    echo -e "${BLUE}3. Перезапустить сервисы${NC}"
+    echo -e "${BLUE}4. Показать логи сервисов${NC}"
+    echo -e "${BLUE}5. Показать статус сервисов${NC}"
     echo -e "${BLUE}6. Вернуться в главное меню${NC}"
     echo -e "${GREEN}====================================${NC}"
     echo -n -e "${YELLOW}Выберите команду: ${NC}"
     read choice
     case $choice in
-        1) echo -n "Введите URL репозитория: "; read url; git clone $url; log_action "Клонирование репозитория: $url" ;;
-        2) git status; log_action "Просмотр статуса репозитория" ;;
-        3) echo -n "Введите файлы для добавления: "; read files; git add $files; log_action "Добавление файлов: $files" ;;
-        4) echo -n "Введите сообщение коммита: "; read msg; git commit -m "$msg"; log_action "Создание коммита: $msg" ;;
-        5) git push; log_action "Отправка изменений в удаленный репозиторий" ;;
+        1) docker-compose up -d; log_action "Запуск сервисов Docker Compose" ;;
+        2) docker-compose down; log_action "Остановка сервисов Docker Compose" ;;
+        3) docker-compose restart; log_action "Перезапуск сервисов Docker Compose" ;;
+        4) echo -n "Введите имя сервиса: "; read service; docker-compose logs $service; log_action "Просмотр логов сервиса: $service" ;;
+        5) docker-compose ps; log_action "Просмотр статуса сервисов Docker Compose" ;;
         6) return ;;
         *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
     esac
     read -p "Нажмите Enter, чтобы продолжить..."
 }
 
-# Функция для работы с Python
-python_commands() {
+# Функция для управления пользователями
+user_commands() {
     clear
     echo -e "${GREEN}====================================${NC}"
-    echo -e "${GREEN} Python ${NC}"
+    echo -e "${GREEN} Управление пользователями ${NC}"
     echo -e "${GREEN}====================================${NC}"
-    echo -e "${BLUE}1. Запустить Python скрипт${NC}"
-    echo -e "${BLUE}2. Установить Python пакет${NC}"
-    echo -e "${BLUE}3. Создать виртуальное окружение${NC}"
-    echo -e "${BLUE}4. Активировать виртуальное окружение${NC}"
-    echo -e "${BLUE}5. Деактивировать виртуальное окружение${NC}"
+    echo -e "${BLUE}1. Добавить пользователя${NC}"
+    echo -e "${BLUE}2. Удалить пользователя${NC}"
+    echo -e "${BLUE}3. Изменить пароль пользователя${NC}"
+    echo -e "${BLUE}4. Добавить пользователя в группу${NC}"
+    echo -e "${BLUE}5. Показать список пользователей${NC}"
     echo -e "${BLUE}6. Вернуться в главное меню${NC}"
     echo -e "${GREEN}====================================${NC}"
     echo -n -e "${YELLOW}Выберите команду: ${NC}"
     read choice
     case $choice in
-        1) echo -n "Введите путь к скрипту: "; read script; python3 $script; log_action "Запуск Python скрипта: $script" ;;
-        2) echo -n "Введите имя пакета: "; read pkg; pip install $pkg; log_action "Установка Python пакета: $pkg" ;;
-        3) echo -n "Введите имя окружения: "; read env; python3 -m venv $env; log_action "Создание виртуального окружения: $env" ;;
-        4) echo -n "Введите путь к окружению: "; read env; source $env/bin/activate; log_action "Активация виртуального окружения: $env" ;;
-        5) deactivate; log_action "Деактивация виртуального окружения" ;;
+        1) echo -n "Введите имя пользователя: "; read user; sudo adduser $user; log_action "Добавление пользователя: $user" ;;
+        2) echo -n "Введите имя пользователя: "; read user; sudo deluser $user; log_action "Удаление пользователя: $user" ;;
+        3) echo -n "Введите имя пользователя: "; read user; sudo passwd $user; log_action "Изменение пароля пользователя: $user" ;;
+        4) echo -n "Введите имя пользователя: "; read user; echo -n "Введите имя группы: "; read group; sudo usermod -aG $group $user; log_action "Добавление пользователя $user в группу $group" ;;
+        5) cut -d: -f1 /etc/passwd; log_action "Просмотр списка пользователей" ;;
         6) return ;;
         *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
     esac
@@ -182,12 +194,16 @@ while true; do
         4) file_commands ;;
         5) monitoring_commands ;;
         6) docker_commands ;;
-        7) ssh_commands ;;
-        8) git_commands ;;
-        9) python_commands ;;
-        10) firewall_commands ;;
-        11) database_commands ;;
-        12) break ;;
+        7) docker_compose_commands ;;
+        8) user_commands ;;
+        9) disk_commands ;;
+        10) process_commands ;;
+        11) ssh_commands ;;
+        12) git_commands ;;
+        13) python_commands ;;
+        14) firewall_commands ;;
+        15) database_commands ;;
+        16) break ;;
         *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
     esac
     read -p "Нажмите Enter, чтобы продолжить..."
