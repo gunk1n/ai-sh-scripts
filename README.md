@@ -18,16 +18,28 @@
 ## Table of contents
 
 - [Quick start](#quick-start)
-- [Status](#status)
-- [What's included](#whats-included)
-- [Bugs and feature requests](#bugs-and-feature-requests)
-- [Contributing](#contributing)
 - [Creators](#creators)
-- [Thanks](#thanks)
 - [Copyright and license](#copyright-and-license)
 
 
 ## Quick start
+
+ 🔘 deepseek/v1.2 (28.01.2025)
+### Что добавлено:
+1. **Новые категории**:
+   - **Git**: Управление репозиториями.
+   - **Python**: Работа с Python-скриптами, пакетами и виртуальными окружениями.
+   - **Firewall (UFW)**: Управление фаерволом.
+   - **Базы данных**: Работа с PostgreSQL и MySQL.
+
+2. **Логирование**:
+   - Все действия пользователя записываются в файл `script.log`.
+
+3. **Цветовое оформление**:
+   - Использованы цвета для улучшения читаемости.
+
+4. **Обработка ошибок**:
+   - Добавлены сообщения об ошибках при неверном выборе.
 
  🔘 deepseek/v1.1 (28.01.2025)
 ### Что добавлено и улучшено:
@@ -67,49 +79,12 @@
 - **Управление файлами**: Просмотр, создание, удаление, переименование файлов.
 
 
-## Status
-
-Here goes all the budgets
-
-## What's included
-
-Some text
-
-```text
-folder1/
-└── folder2/
-    ├── folder3/
-    │   ├── file1
-    │   └── file2
-    └── folder4/
-        ├── file3
-        └── file4
-```
-
-## Bugs and feature requests
-
-Have a bug or a feature request? Please first read the [issue guidelines](https://github.com/gunk1n/blob/master/CONTRIBUTING.md) and search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/gunk1n/issues/new).
-
-- BUG_REPORT.md
-- FEATURE_REQUEST.md
-
-## Contributing
-
-Please read through our [contributing guidelines](https://github.com/gunk1n/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
-
-Moreover, all HTML and CSS should conform to the [Code Guide](https://github.com/mdo/code-guide), maintained by [Main author](https://github.com/usernamemainauthor).
-
-Editor preferences are available in the [editor config](https://github.com/gunk1n/blob/master/.editorconfig) for easy use in common text editors. Read more and download plugins at <https://editorconfig.org/>.
-
 ## Creators
 
 **Creator 1**
 
 - <https://github.com/gunk1n>
 
-## Thanks
-
-Some Text
 
 ## Copyright and license
 
