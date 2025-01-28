@@ -5,6 +5,8 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
 
 # Логирование действий
@@ -12,28 +14,40 @@ log_action() {
     echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> script.log
 }
 
-# Функция для отображения главного меню
+# Проверка зависимостей
+check_dependencies() {
+    if ! command -v dig &> /dev/null; then
+        sudo apt install -y dnsutils
+    fi
+    if ! command -v jq &> /dev/null; then
+        sudo apt install -y jq
+    fi
+}
+
+# Главное меню
 show_menu() {
     clear
     echo -e "${GREEN}===========================================${NC}"
-    echo -e "${GREEN} Меню полезных команд Ubuntu 22.04 ${NC}"
+    echo -e "${MAGENTA} Ultimate DevOps Helper - Ubuntu 22.04 ${NC}"
     echo -e "${GREEN}===========================================${NC}"
-    echo -e "${BLUE}1. Системные команды${NC}"
-    echo -e "${BLUE}2. Сетевые команды${NC}"
-    echo -e "${BLUE}3. Управление пакетами${NC}"
-    echo -e "${BLUE}4. Управление файлами${NC}"
-    echo -e "${BLUE}5. Мониторинг системы${NC}"
-    echo -e "${BLUE}6. Docker${NC}"
-    echo -e "${BLUE}7. Docker Compose${NC}"
-    echo -e "${BLUE}8. Управление пользователями${NC}"
-    echo -e "${BLUE}9. Управление дисками${NC}"
-    echo -e "${BLUE}10. Работа с процессами${NC}"
-    echo -e "${BLUE}11. SSH${NC}"
-    echo -e "${BLUE}12. Git${NC}"
-    echo -e "${BLUE}13. Python${NC}"
-    echo -e "${BLUE}14. Firewall (UFW)${NC}"
-    echo -e "${BLUE}15. Базы данных${NC}"
-    echo -e "${BLUE}16. Выход${NC}"
+    echo -e "${CYAN} 1. Системные команды"
+    echo -e " 2. Сетевые команды"
+    echo -e " 3. Управление пакетами"
+    echo -e " 4. Управление файлами"
+    echo -e " 5. Мониторинг системы"
+    echo -e " 6. Docker"
+    echo -e " 7. Docker Compose"
+    echo -e " 8. Управление пользователями"
+    echo -e " 9. Управление дисками"
+    echo -e "10. Работа с процессами"
+    echo -e "11. SSH"
+    echo -e "12. Git"
+    echo -e "13. Python"
+    echo -e "14. Firewall (UFW)"
+    echo -e "15. Базы данных"
+    echo -e "16. Управление хостами и DNS"
+    echo -e "17. DevOps Tools Installation"
+    echo -e "18. Выход${NC}"
     echo -e "${GREEN}===========================================${NC}"
     echo -n -e "${YELLOW}Выберите категорию: ${NC}"
 }
@@ -183,7 +197,196 @@ user_commands() {
     read -p "Нажмите Enter, чтобы продолжить..."
 }
 
-# Основной цикл меню
+# Функция для отображения команд управления пакетами
+package_commands() {
+    clear
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${GREEN} Управление пакетами ${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${BLUE}1. Обновить список пакетов${NC}"
+    echo -e "${BLUE}2. Установить пакет${NC}"
+    echo -e "${BLUE}3. Удалить пакет${NC}"
+    echo -e "${BLUE}4. Обновить все пакеты${NC}"
+    echo -e "${BLUE}5. Поиск пакета${NC}"
+    echo -e "${BLUE}6. Очистить кэш пакетов${NC}"
+    echo -e "${BLUE}7. Вернуться в главное меню${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -n -e "${YELLOW}Выберите команду: ${NC}"
+    read choice
+    case $choice in
+        1) sudo apt update; log_action "Обновление списка пакетов" ;;
+        2) echo -n "Введите имя пакета: "; read pkg; sudo apt install $pkg; log_action "Установка пакета: $pkg" ;;
+        3) echo -n "Введите имя пакета: "; read pkg; sudo apt remove $pkg; log_action "Удаление пакета: $pkg" ;;
+        4) sudo apt upgrade; log_action "Обновление всех пакетов" ;;
+        5) echo -n "Введите имя пакета для поиска: "; read pkg; apt search $pkg; log_action "Поиск пакета: $pkg" ;;
+        6) sudo apt clean; log_action "Очистка кэша пакетов" ;;
+        7) return ;;
+        *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
+    esac
+    read -p "Нажмите Enter, чтобы продолжить..."
+}
+
+# Функция для работы с Git
+git_commands() {
+    clear
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${GREEN} Git ${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${BLUE}1. Клонировать репозиторий${NC}"
+    echo -e "${BLUE}2. Показать статус репозитория${NC}"
+    echo -e "${BLUE}3. Добавить файлы в коммит${NC}"
+    echo -e "${BLUE}4. Создать коммит${NC}"
+    echo -e "${BLUE}5. Отправить изменения в удаленный репозиторий${NC}"
+    echo -e "${BLUE}6. Вернуться в главное меню${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -n -e "${YELLOW}Выберите команду: ${NC}"
+    read choice
+    case $choice in
+        1) echo -n "Введите URL репозитория: "; read url; git clone $url; log_action "Клонирование репозитория: $url" ;;
+        2) git status; log_action "Просмотр статуса репозитория" ;;
+        3) echo -n "Введите файлы для добавления: "; read files; git add $files; log_action "Добавление файлов: $files" ;;
+        4) echo -n "Введите сообщение коммита: "; read msg; git commit -m "$msg"; log_action "Создание коммита: $msg" ;;
+        5) git push; log_action "Отправка изменений в удаленный репозиторий" ;;
+        6) return ;;
+        *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
+    esac
+    read -p "Нажмите Enter, чтобы продолжить..."
+}
+
+# Функция для работы с Python
+python_commands() {
+    clear
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${GREEN} Python ${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${BLUE}1. Запустить Python скрипт${NC}"
+    echo -e "${BLUE}2. Установить Python пакет${NC}"
+    echo -e "${BLUE}3. Создать виртуальное окружение${NC}"
+    echo -e "${BLUE}4. Активировать виртуальное окружение${NC}"
+    echo -e "${BLUE}5. Деактивировать виртуальное окружение${NC}"
+    echo -e "${BLUE}6. Вернуться в главное меню${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -n -e "${YELLOW}Выберите команду: ${NC}"
+    read choice
+    case $choice in
+        1) echo -n "Введите путь к скрипту: "; read script; python3 $script; log_action "Запуск Python скрипта: $script" ;;
+        2) echo -n "Введите имя пакета: "; read pkg; pip install $pkg; log_action "Установка Python пакета: $pkg" ;;
+        3) echo -n "Введите имя окружения: "; read env; python3 -m venv $env; log_action "Создание виртуального окружения: $env" ;;
+        4) echo -n "Введите путь к окружению: "; read env; source $env/bin/activate; log_action "Активация виртуального окружения: $env" ;;
+        5) deactivate; log_action "Деактивация виртуального окружения" ;;
+        6) return ;;
+        *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
+    esac
+    read -p "Нажмите Enter, чтобы продолжить..."
+}
+
+# Управление хостами и DNS
+host_dns_commands() {
+    clear
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${GREEN} Управление хостами и DNS ${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${BLUE}1. Показать DNS-записи домена${NC}"
+    echo -e "${BLUE}2. Добавить запись в /etc/hosts${NC}"
+    echo -e "${BLUE}3. Проверить доступность порта${NC}"
+    echo -e "${BLUE}4. Изменить DNS-серверы${NC}"
+    echo -e "${BLUE}5. Показать текущие DNS-серверы${NC}"
+    echo -e "${BLUE}6. Вернуться в главное меню${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -n -e "${YELLOW}Выберите команду: ${NC}"
+    read choice
+    
+    case $choice in
+        1)  echo -n "Введите домен: "; read domain
+            dig $domain ANY +noall +answer
+            log_action "Проверка DNS-записей для $domain" ;;
+            
+        2)  echo -n "Введите IP: "; read ip
+            echo -n "Введите домен: "; read host
+            echo "$ip $host" | sudo tee -a /etc/hosts
+            log_action "Добавлена запись в /etc/hosts: $ip $host" ;;
+            
+        3)  echo -n "Введите хост: "; read host
+            echo -n "Введите порт: "; read port
+            nc -zv $host $port
+            log_action "Проверка порта $port на $host" ;;
+            
+        4)  echo -n "Введите DNS-серверы (через пробел): "; read dns_servers
+            sudo resolvectl dns eth0 $dns_servers
+            log_action "Изменены DNS-серверы: $dns_servers" ;;
+            
+        5)  resolvectl status | grep "DNS Servers"
+            log_action "Просмотр текущих DNS-серверов" ;;
+            
+        6)  return ;;
+        
+        *)  echo -e "${RED}Неверный выбор!${NC}" ;;
+    esac
+    read -p "Нажмите Enter, чтобы продолжить..."
+}
+
+# Установка DevOps инструментов
+devops_tools_installation() {
+    clear
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${GREEN} Установка DevOps инструментов ${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -e "${BLUE}1. Установить базовые утилиты${NC}"
+    echo -e "${BLUE}2. Установить Docker и Docker Compose${NC}"
+    echo -e "${BLUE}3. Установить Kubernetes tools${NC}"
+    echo -e "${BLUE}4. Установить Terraform${NC}"
+    echo -e "${BLUE}5. Установить Ansible${NC}"
+    echo -e "${BLUE}6. Установить Python Dev Tools${NC}"
+    echo -e "${BLUE}7. Установить Go${NC}"
+    echo -e "${BLUE}8. Установить Node.js${NC}"
+    echo -e "${BLUE}9. Вернуться в главное меню${NC}"
+    echo -e "${GREEN}====================================${NC}"
+    echo -n -e "${YELLOW}Выберите опцию: ${NC}"
+    read choice
+    
+    case $choice in
+        1)  sudo apt install -y curl wget jq tmux htop tree
+            log_action "Установлены базовые утилиты" ;;
+            
+        2)  sudo apt install -y docker.io
+            sudo systemctl enable --now docker
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            log_action "Установлены Docker и Docker Compose" ;;
+            
+        3)  sudo apt install -y kubectl helm minikube
+            log_action "Установлены Kubernetes инструменты" ;;
+            
+        4)  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+            sudo apt update && sudo apt install -y terraform
+            log_action "Установлен Terraform" ;;
+            
+        5)  sudo apt install -y ansible
+            log_action "Установлен Ansible" ;;
+            
+        6)  sudo apt install -y python3-venv python3-pip python3-dev build-essential
+            log_action "Установлены Python Dev Tools" ;;
+            
+        7)  wget https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
+            sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+            source ~/.bashrc
+            log_action "Установлен Go" ;;
+            
+        8)  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt install -y nodejs
+            log_action "Установлен Node.js" ;;
+            
+        9)  return ;;
+        
+        *)  echo -e "${RED}Неверный выбор!${NC}" ;;
+    esac
+    read -p "Нажмите Enter, чтобы продолжить..."
+}
+
+# Основной цикл
+check_dependencies
 while true; do
     show_menu
     read choice
@@ -203,10 +406,11 @@ while true; do
         13) python_commands ;;
         14) firewall_commands ;;
         15) database_commands ;;
-        16) break ;;
-        *) echo -e "${RED}Неверный выбор. Попробуйте снова.${NC}" ;;
+        16) host_dns_commands ;;
+        17) devops_tools_installation ;;
+        18) break ;;
+        *) echo -e "${RED}Неверный выбор!${NC}" ;;
     esac
-    read -p "Нажмите Enter, чтобы продолжить..."
 done
 
-echo -e "${GREEN}Выход из меню.${NC}"
+echo -e "${GREEN}До новых встреч!${NC}"
